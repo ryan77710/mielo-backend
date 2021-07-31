@@ -35,6 +35,7 @@ const User = mongoose.model("User", {
       Linkedin: String,
       Twitch: String,
       Onlyfan: String,
+      Patreon: String,
     },
   },
   token: String,

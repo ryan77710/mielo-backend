@@ -17,7 +17,11 @@ const Post = mongoose.model("Post", {
     asset_id: String,
     public_id: String,
   },
-  postVideo: {},
+  postVideo: {
+    secure_url: String,
+    asset_id: String,
+    public_id: String,
+  },
   comment: [
     {
       commentOwner: {

@@ -1,13 +1,22 @@
 const mongoose = require("mongoose");
-//missing video and date comment
+
 const Post = mongoose.model("Post", {
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+
+  viewed: {
+    type: Number,
+    default: 0,
+  },
   type: {
     type: String,
     value: "text" || "picture" || "video",
+  },
+  like: {
+    type: Number,
+    default: 0,
   },
   postText: {
     text: String,
@@ -22,6 +31,16 @@ const Post = mongoose.model("Post", {
     asset_id: String,
     public_id: String,
   },
+  date: {
+    dateNow: Number,
+    year: Number,
+    mouth: Number,
+    day: Number,
+    hour: Number,
+    minute: Number,
+  },
+
+  //put comment in a other colection
   comment: [
     {
       commentOwner: {
@@ -29,7 +48,18 @@ const Post = mongoose.model("Post", {
         ref: "User",
       },
       commentText: String,
-      like: Number,
+      commentLike: {
+        type: Number,
+        default: 0,
+      },
+      commentDate: {
+        dateNow: Number,
+        year: Number,
+        mouth: Number,
+        day: Number,
+        hour: Number,
+        minute: Number,
+      },
     },
   ],
 });

@@ -1,6 +1,6 @@
 const User = require("../model/User");
 const Post = require("../model/Post");
-const isOwner = async (req, res, next) => {
+const isOwnerPost = async (req, res, next) => {
   console.log("test enter");
   if (req.headers.authorization) {
     const token = req.headers.authorization.replace("Bearer ", "");
@@ -11,6 +11,7 @@ const isOwner = async (req, res, next) => {
       req.user = user;
       const post = await Post.findById(req.params.id);
       if (String(post.owner) === String(user._id)) {
+        req.post = post;
         return next();
       } else {
         return res
@@ -27,4 +28,4 @@ const isOwner = async (req, res, next) => {
   }
 };
 
-module.exports = isOwner;
+module.exports = isOwnerPost;

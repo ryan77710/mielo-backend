@@ -6,18 +6,28 @@ const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
 const isAuthentificated = require("../midelware/isAuthentificated");
-const isOwner = require("../midelware/isOwner");
+const isOwnerPost = require("../midelware/isOwnerPost");
 const cloudinary = require("cloudinary").v2;
 
 router.post("/post/publish-text", isAuthentificated, async (req, res) => {
   console.log("route : /post/publish-text");
   const { type, text } = req.fields;
   try {
+    const date = new Date();
+
     const newPost = new Post({
       owner: req.user._id,
       type: type,
       postText: {
         text: text,
+      },
+      date: {
+        dateNow: Date.now(),
+        year: date.getFullYear(),
+        mouth: date.getMonth() + 1,
+        day: date.getDate(),
+        hour: date.getHours(),
+        minute: date.getMinutes(),
       },
     });
 
@@ -39,6 +49,14 @@ router.post("/post/publish-picture", isAuthentificated, async (req, res) => {
     const newPost = new Post({
       owner: req.user._id,
       type: type,
+      date: {
+        dateNow: Date.now(),
+        year: date.getFullYear(),
+        mouth: date.getMonth() + 1,
+        day: date.getDate(),
+        hour: date.getHours(),
+        minute: date.getMinutes(),
+      },
     });
 
     const pictureUploaded = await cloudinary.uploader.upload(picture.path, {
@@ -67,6 +85,14 @@ router.post("/post/publish-video", isAuthentificated, async (req, res) => {
     const newPost = new Post({
       owner: req.user._id,
       type: type,
+      date: {
+        dateNow: Date.now(),
+        year: date.getFullYear(),
+        mouth: date.getMonth() + 1,
+        day: date.getDate(),
+        hour: date.getHours(),
+        minute: date.getMinutes(),
+      },
     });
     //size video must be less than 100000 mo else we have to paid cloudinary
     if (video.size <= 100000000) {
@@ -107,9 +133,15 @@ router.post("/post/publish-video", isAuthentificated, async (req, res) => {
   }
 });
 
-router.put("/post/update-text/:id", isOwner, async (req, res) => {
+router.put("/post/update-text/:id", isOwnerPost, async (req, res) => {
   console.log("route : /post/update/:id");
-  res.status(200).json({ message: "okok" });
+  try {
+    req.post.postText.text = req.fields.text;
+    req.post.save();
+    res.status(200).json({ message: "post text update", data: req.post });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 module.exports = router;

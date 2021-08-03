@@ -10,16 +10,18 @@ const isOwnerPost = async (req, res, next) => {
       console.log("test finish");
       req.user = user;
       const post = await Post.findById(req.params.id);
-      if (String(post.owner) === String(user._id)) {
-        req.post = post;
-        return next();
+      if (post) {
+        if (String(post.owner) === String(user._id)) {
+          req.post = post;
+          return next();
+        } else {
+          return res
+            .status(400)
+            .json({ messsage: "Unauthorized you don't owned this post" });
+        }
       } else {
-        return res
-          .status(400)
-          .json({ messsage: "Unauthorized you don't owned this post" });
+        res.status(400).json({ message: "Unauthorizedd" });
       }
-
-      return next();
     } else {
       res.status(400).json({ messsage: "Unauthorized :((" });
     }

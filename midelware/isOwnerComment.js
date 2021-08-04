@@ -1,6 +1,7 @@
 const User = require("../model/User");
 const Post = require("../model/Post");
-const isOwnerPost = async (req, res, next) => {
+const Comment = require("../model/Comment");
+const isOwnerComment = async (req, res, next) => {
   console.log("test enter");
   if (req.headers.authorization) {
     const token = req.headers.authorization.replace("Bearer ", "");
@@ -9,18 +10,18 @@ const isOwnerPost = async (req, res, next) => {
     if (user) {
       console.log("test finish");
       req.user = user;
-      const post = await Post.findById(req.params.id);
-      if (post) {
-        if (String(post.owner) === String(user._id)) {
-          req.post = post;
+      const comment = await Comment.findById(req.params.id);
+      if (comment) {
+        if (String(comment.commentOwner) === String(user._id)) {
+          req.comment = comment;
           return next();
         } else {
           return res
             .status(400)
-            .json({ messsage: "Unauthorized you don't owned this post" });
+            .json({ messsage: "Unauthorized you don't owned this comment" });
         }
       } else {
-        res.status(400).json({ message: "post not find" });
+        res.status(400).json({ message: "comment not find" });
       }
     } else {
       res.status(400).json({ messsage: "Unauthorized :((" });
@@ -30,4 +31,4 @@ const isOwnerPost = async (req, res, next) => {
   }
 };
 
-module.exports = isOwnerPost;
+module.exports = isOwnerComment;

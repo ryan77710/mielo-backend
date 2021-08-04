@@ -21,8 +21,12 @@ cloudinary.config({
 });
 const userRoute = require("./route/user");
 app.use(userRoute);
+
 const postRoute = require("./route/post");
 app.use(postRoute);
+
+const commentRoute = require("./route/comment");
+app.use(commentRoute);
 
 app.get("/", (req, res) => {
   res.status(200).send("Home");

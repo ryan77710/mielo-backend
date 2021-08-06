@@ -28,6 +28,9 @@ app.use(postRoute);
 const commentRoute = require("./route/comment");
 app.use(commentRoute);
 
+const reportRoute = require("./route/report");
+app.use(reportRoute);
+
 app.get("/", (req, res) => {
   res.status(200).send("Home");
 });

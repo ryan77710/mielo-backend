@@ -5,7 +5,7 @@ const Post = require("../model/Post");
 const Comment = require("../model/Comment");
 const isAuthentificated = require("../midelware/isAuthentificated");
 const isOwnerComment = require("../midelware/isOwnerComment");
-
+//add the feature to check if th eid existe and if a comment has already been posted
 router.post("/comment/publish/:id", isAuthentificated, async (req, res) => {
   console.log("route : /comment/publish/:id");
   try {
@@ -55,7 +55,7 @@ router.get("/comment/delete/:id", isOwnerComment, async (req, res) => {
   console.log("/comment/delete/:id");
   try {
     req.comment.deleteOne();
-    res.status(200).json({ message: "comment delete" });
+    res.status(200).json({ message: "comment deleted" });
   } catch (error) {
     res.status(400).json(error.message);
   }

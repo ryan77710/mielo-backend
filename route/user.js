@@ -38,11 +38,13 @@ router.post("/user/sign-up", async (req, res) => {
 
         const new1 = await User.find(newUser).select("public token email");
 
-        res.status(200).json({ message: "welcome user created", data: new1 });
+        res
+          .status(200)
+          .json({ message: "welcome user created", data: new1[0] });
       }
     }
   } catch (error) {
-    res.status(400).json(error.message);
+    res.status(401).json(error.message);
   }
 });
 

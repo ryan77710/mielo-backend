@@ -4,7 +4,7 @@ const User = require("../model/User");
 const Post = require("../model/Post");
 const Comment = require("../model/Comment");
 const Report = require("../model/Report");
-const isAuthentificated = require("../midelware/isAuthentificated");
+const isAuthentificated = require("../middleware/isAuthentificated");
 
 router.post("/report/publish", isAuthentificated, async (req, res) => {
   console.log("/report/publish");
@@ -51,7 +51,7 @@ router.post(
     }
   }
 );
-//add user status admin or staff or supremeLeader
+//add user status admin or modo or supremeLeader
 router.put("/report/analyse/:id", async (req, res) => {
   console.log("route : /report/analyse/:id");
   try {

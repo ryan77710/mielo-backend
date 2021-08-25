@@ -4,7 +4,7 @@ const User = require("../model/User");
 const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
-const isAuthentificated = require("../midelware/isAuthentificated");
+const isAuthentificated = require("../middleware/isAuthentificated");
 const cloudinary = require("cloudinary").v2;
 
 router.post("/user/sign-up", async (req, res) => {
@@ -79,20 +79,24 @@ router.post(
     console.log("route : /user/add-profile-picture ");
     try {
       const picture = req.files.picture;
+      if (picture) {
+        const pictureUploaded = await cloudinary.uploader.upload(picture.path, {
+          folder: `mielo/user/${req.user._id}/profile-picture/`,
+        });
+        const profilePicture = {
+          asset_id: pictureUploaded.asset_id,
+          secure_url: pictureUploaded.secure_url,
+          public_id: pictureUploaded.public_id,
+        };
+        req.user.public.account.profilePicture = profilePicture;
 
-      const pictureUploaded = await cloudinary.uploader.upload(picture.path, {
-        folder: `mielo/user/${req.user._id}/profile-picture/`,
-      });
-      const profilePicture = {
-        asset_id: pictureUploaded.asset_id,
-        secure_url: pictureUploaded.secure_url,
-        public_id: pictureUploaded.public_id,
-      };
-      req.user.public.account.profilePicture = profilePicture;
-      req.user.save();
-      res
-        .status(200)
-        .json({ message: "profile picture add ", data: profilePicture });
+        req.user.save();
+        res
+          .status(200)
+          .json({ message: "profile picture add", data: profilePicture });
+      } else {
+        res.status(400).json({ message: "picture missing" });
+      }
     } catch (error) {
       res.status(400).json(error.message);
     }
@@ -105,9 +109,9 @@ router.post(
   async (req, res) => {
     console.log(" road: /user/picture-profile-change");
     try {
-      const picture = req.files.picture.path;
+      if (req.files.picture) {
+        const picture = req.files.picture.path;
 
-      if (picture) {
         const public_id = req.user.public.account.profilePicture.public_id;
         await cloudinary.uploader.destroy(public_id);
 
@@ -136,10 +140,11 @@ router.post(
 router.post("/user/add-picture", isAuthentificated, async (req, res) => {
   console.log("route : /user/add-picture");
   try {
-    const picture = req.files.picture.path;
-    if (picture) {
-      const public_id = req.user.public.account.profilePicture.public_id;
-      await cloudinary.uploader.destroy(public_id);
+    if (req.files.picture) {
+      const picture = req.files.picture.path;
+
+      // const public_id = req.user.public.account.profilePicture.public_id;
+      // await cloudinary.uploader.destroy(public_id);
 
       const pictureUploaded = await cloudinary.uploader.upload(picture, {
         folder: `mielo/user/${req.user._id}/pictures/`,

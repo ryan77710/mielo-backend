@@ -37,11 +37,7 @@ app.get("/", (req, res) => {
   res.status(200).send("Home");
 });
 app.all("*", (req, res) => {
-  res.status(404).send("Page introuvable");
+  res.status(404).send("request not found");
 });
-
-// app.listen(process.env.PORT || 3200, () => {
-//   console.log("server has started");
-// });
 
 module.exports = app;

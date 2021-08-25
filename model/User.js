@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-//missing clothe music movie series post
+//missing clothe music movie series post and status
 const User = mongoose.model("User", {
   email: String,
   public: {

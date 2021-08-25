@@ -5,8 +5,8 @@ const Post = require("../model/Post");
 const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
-const isAuthentificated = require("../midelware/isAuthentificated");
-const isOwnerPost = require("../midelware/isOwnerPost");
+const isAuthentificated = require("../middleware/isAuthentificated");
+const isOwnerPost = require("../middleware/isOwnerPost");
 const cloudinary = require("cloudinary").v2;
 
 router.post("/post/publish-text", isAuthentificated, async (req, res) => {
@@ -96,7 +96,7 @@ router.post("/post/publish-video", isAuthentificated, async (req, res) => {
         minute: date.getMinutes(),
       },
     });
-    //size video must be less than 100000 mo else we have to paid cloudinary
+    //size video must be less than 100000 mo else we have to pay cloudinary
     if (video.size <= 100000000) {
       const videoUploaded = await cloudinary.uploader.upload_large(
         video.path,

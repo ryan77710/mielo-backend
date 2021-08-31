@@ -4,7 +4,7 @@ const User = require("../model/User");
 const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
-const isAuthentificated = require("../middleware/isAuthentificated");
+const isAuthentificated = require("../../middleware/isAuthentificated");
 const cloudinary = require("cloudinary").v2;
 
 router.post("/user/sign-up", async (req, res) => {
@@ -182,6 +182,38 @@ router.post("/user/delete-picture", isAuthentificated, async (req, res) => {
       res.status(200).json({ message: "picture deleted", data: userPictures });
     } else {
       res.status(400).json({ message: "missing public_id or asset_id" });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+//add to test file /user/login
+router.post("/user/login", async (req, res) => {
+  console.log("route: /user/login");
+  try {
+    if (req.fields.email && req.fields.password) {
+      const findUser = await User.findOne({ email: req.fields.email });
+      if (findUser) {
+        const password = req.fields.password;
+        const userSalt = findUser.private.salt;
+        const hashToCompare = SHA256(password + userSalt).toString(encBase64);
+        if (findUser.private.hash === hashToCompare) {
+          const user = {
+            _id: findUser._id,
+            token: findUser.token,
+            username: findUser.public.account.username,
+            profilePicture: findUser.public.account.profilePicture,
+          };
+
+          res.status(200).json({ message: "user login", data: user });
+        } else {
+          res.status(400).json({ message: "email or password incorrect" });
+        }
+      } else {
+        res.status(400).json({ message: "email or password incorrect" });
+      }
+    } else {
+      res.status(400).json({ message: "missing field email or password" });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });

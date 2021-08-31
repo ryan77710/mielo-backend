@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx jest"
+    "test": "npx jest",
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
@@ -23,5 +24,13 @@
   "devDependencies": {
     "jest": "^27.0.6",
     "supertest": "^6.1.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryan77710/mielo-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryan77710/mielo-backend/issues"
+  },
+  "homepage": "https://github.com/ryan77710/mielo-backend#readme"
 }

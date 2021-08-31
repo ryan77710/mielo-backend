@@ -1,5 +1,4 @@
-const User = require("../model/User");
-const { findOne } = require("../model/User");
+const User = require("../src/model/User");
 const isAuthentificated = async (req, res, next) => {
   console.log("test enter");
   if (req.headers.authorization) {

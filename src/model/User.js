@@ -1,7 +1,12 @@
 const mongoose = require("mongoose");
-//missing clothe music movie series post and status
+//missing clothe ,add friend ,follower,,change username,job,pictures,pictureDay,pictureProfile, post  place
+//delete public object //do not forget select to optimize database
 const User = mongoose.model("User", {
   email: String,
+  status: {
+    type: String,
+    value: "user" || "moderator" || "administrator" || "overlord",
+  },
   public: {
     avatar: {
       age: Number,
@@ -15,6 +20,7 @@ const User = mongoose.model("User", {
       description: { type: String, default: "new user" },
       phone: String,
       profilePicture: Object,
+      picture_day: Object,
       pictures: [Object],
       post: [
         {
@@ -22,20 +28,17 @@ const User = mongoose.model("User", {
           ref: "Post",
         },
       ],
+      birth_date: Number,
+      first_name: String,
+      last_name: String,
     },
     location: Array,
-    link: {
-      Facebook: String,
-      Twitter: String,
-      Youtube: String,
-      Snapchat: String,
-      Pinterest: String,
-      Instagram: String,
-      Tiktok: String,
-      Linkedin: String,
-      Twitch: String,
-      Onlyfan: String,
-      Patreon: String,
+
+    about: {
+      link: Array,
+      fav_movies: Array,
+      fav_series: Array,
+      fav_music: Array,
     },
   },
   token: String,

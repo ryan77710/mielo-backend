@@ -39,29 +39,6 @@ const Post = mongoose.model("Post", {
     hour: Number,
     minute: Number,
   },
-
-  //put comment in a other colection
-  comment: [
-    {
-      commentOwner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-      commentText: String,
-      commentLike: {
-        type: Number,
-        default: 0,
-      },
-      commentDate: {
-        dateNow: Number,
-        year: Number,
-        mouth: Number,
-        day: Number,
-        hour: Number,
-        minute: Number,
-      },
-    },
-  ],
 });
 
 module.exports = Post;

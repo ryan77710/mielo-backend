@@ -1,8 +1,8 @@
 const request = require("supertest");
-const app = require("../../index.js");
+const app = require("../../src/app");
 const mongoose = require("mongoose");
 const uid2 = require("uid2");
-const createUser = require("../../utils/utils").createUser;
+const createUser = require("../resources/utils").createUser;
 
 describe("route report", () => {
   beforeAll(async () => {

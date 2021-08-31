@@ -5,8 +5,8 @@ const Post = require("../model/Post");
 const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
-const isAuthentificated = require("../middleware/isAuthentificated");
-const isOwnerPost = require("../middleware/isOwnerPost");
+const isAuthentificated = require("../../middleware/isAuthentificated");
+const isOwnerPost = require("../../middleware/isOwnerPost");
 const cloudinary = require("cloudinary").v2;
 
 router.post("/post/publish-text", isAuthentificated, async (req, res) => {
@@ -168,7 +168,7 @@ router.delete("/post/delete/:id", isOwnerPost, async (req, res) => {
     } else {
       res
         .status(400)
-        .json({ message: "type missing or must be pictire or video" });
+        .json({ message: "type missing or must be picture or video" });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });

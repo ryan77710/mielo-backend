@@ -1,5 +1,5 @@
-const User = require("../model/User");
-const Post = require("../model/Post");
+const User = require("../src/model/User");
+const Post = require("../src/model/Post");
 const isOwnerPost = async (req, res, next) => {
   console.log("test enter");
   if (req.headers.authorization) {

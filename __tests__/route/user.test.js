@@ -1,11 +1,11 @@
 const request = require("supertest");
-const app = require("../../index.js");
+const app = require("../../src/app");
 const mongoose = require("mongoose");
 const uid2 = require("uid2");
 jest.mock("cloudinary");
 const cloudinary = require("cloudinary").v2;
-const createUser = require("../../utils/utils").createUser;
-const mockUploadPicture = require("../../utils/mockResponses");
+const createUser = require("../resources/utils").createUser;
+const mockUploadPicture = require("../resources/mockResponses");
 
 describe("route user", () => {
   beforeAll(async () => {
@@ -107,7 +107,7 @@ describe("route user", () => {
       const responseTested = await request(app)
         .post("/user/add-profile-picture")
         .auth(authToken, { type: "bearer" })
-        .attach("picture", "utils/vetement-zoro-3.jpg");
+        .attach("picture", "__tests__/resources/vetement-zoro-3.jpg");
       expect(responseTested.status).toBe(200);
       expect(responseTested.body.message).toBe("profile picture add");
       expect(cloudinary.uploader.upload).toHaveBeenCalledTimes(1);
@@ -140,14 +140,14 @@ describe("route user", () => {
       const responseAddPicture = await request(app)
         .post("/user/add-profile-picture")
         .auth(authToken, { type: "bearer" })
-        .attach("picture", "utils/vetement-zoro-3.jpg")
+        .attach("picture", "__tests__/resources/vetement-zoro-3.jpg")
         .expect(200);
       cloudinary.uploader.upload.mockReturnValueOnce(mockUploadPicture);
 
       const responseTested = await request(app)
         .post("/user/picture-profile-change")
         .auth(authToken, { type: "bearer" })
-        .attach("picture", "utils/vetement-zoro-3.jpg");
+        .attach("picture", "__tests__/resources/vetement-zoro-3.jpg");
       expect(responseTested.body.message).toBe("picture update");
     });
 
@@ -163,7 +163,7 @@ describe("route user", () => {
       const responseAddPicture = await request(app)
         .post("/user/add-profile-picture")
         .auth(authToken, { type: "bearer" })
-        .attach("picture", "utils/vetement-zoro-3.jpg")
+        .attach("picture", "__tests__/resources/vetement-zoro-3.jpg")
         .expect(200);
       cloudinary.uploader.upload.mockReturnValueOnce(mockUploadPicture);
 
@@ -188,7 +188,7 @@ describe("route user", () => {
       const responseTested = await request(app)
         .post("/user/add-picture")
         .auth(authToken, { type: "bearer" })
-        .attach("picture", "utils/vetement-zoro-3.jpg")
+        .attach("picture", "__tests__/resources/vetement-zoro-3.jpg")
         .expect(200);
       expect(responseTested.body.message).toBe("picture added");
     });

@@ -4,7 +4,7 @@ const User = require("../model/User");
 const Post = require("../model/Post");
 const Comment = require("../model/Comment");
 const Report = require("../model/Report");
-const isAuthentificated = require("../middleware/isAuthentificated");
+const isAuthentificated = require("../../middleware/isAuthentificated");
 
 router.post("/report/publish", isAuthentificated, async (req, res) => {
   console.log("/report/publish");

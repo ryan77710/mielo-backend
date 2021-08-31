@@ -3,8 +3,8 @@ const router = express.Router();
 const User = require("../model/User");
 const Post = require("../model/Post");
 const Comment = require("../model/Comment");
-const isAuthentificated = require("../middleware/isAuthentificated");
-const isOwnerComment = require("../middleware/isOwnerComment");
+const isAuthentificated = require("../../middleware/isAuthentificated");
+const isOwnerComment = require("../../middleware/isOwnerComment");
 //add the feature to check if the id existe
 router.post("/comment/publish/:id", isAuthentificated, async (req, res) => {
   console.log("route : /comment/publish/:id");

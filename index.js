@@ -25,7 +25,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 const httpServer = require("http").createServer(app);
 const options = {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.URL,
     methods: ["GET", "POST"],
   },
 };

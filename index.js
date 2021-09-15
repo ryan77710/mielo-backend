@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const handleLocation = require("./utils/handleLocation").handleLocation;
+const userDeconnection = require("./utils/userDeconnection").userDeconnection;
 
 //-------------
 // const app = require("./src/app");
@@ -33,6 +35,22 @@ io.on("connection", (socket) => {
   socket.on("login", (arg) => {
     socket.emit("newUser", arg);
   });
+  // socket.on("disconnecting", () => {
+  //   console.log("disconnecting"); // the Set contains at least the socket ID
+  // });
+
+  socket.on("deconnection", (arg) => {
+    console.log("deconnection");
+    // socket.rooms.size === 0;
+    userDeconnection(arg);
+  });
+  socket.on("userPos", (arg) => {
+    handleLocation(arg);
+  });
+  // socket.on("terminate", () => {
+  //   console.log("terminate");
+  //   socket.disconnect(0);
+  // });
 });
 
 httpServer.listen(process.env.PORT || 3200, () => {

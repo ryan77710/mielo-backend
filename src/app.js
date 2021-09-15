@@ -33,6 +33,9 @@ app.use(commentRoute);
 const reportRoute = require("./route/report");
 app.use(reportRoute);
 
+const locationRoute = require("./route/location");
+app.use(locationRoute);
+
 app.get("/", (req, res) => {
   res.status(200).send("Home");
 });

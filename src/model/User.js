@@ -7,6 +7,8 @@ const User = mongoose.model("User", {
     type: String,
     value: "user" || "moderator" || "administrator" || "overlord",
   },
+  connected: false,
+  location: { type: [Number], index: "2d" },
   public: {
     avatar: {
       age: Number,
@@ -32,7 +34,6 @@ const User = mongoose.model("User", {
       first_name: String,
       last_name: String,
     },
-    location: Array,
 
     about: {
       link: Array,

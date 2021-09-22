@@ -12,7 +12,7 @@ router.post("/location/around", async (req, res) => {
     const filter = {
       connected: true,
       location: {
-        $near: [2.9023778, 48.232692],
+        $near: [longitude, latitude],
         $maxDistance: 0.05,
       },
     };

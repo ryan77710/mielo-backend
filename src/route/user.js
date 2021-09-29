@@ -12,20 +12,20 @@ router.post("/user/sign-up", async (req, res) => {
   try {
     const { email, username, description, password } = req.fields;
     const emailExist = await User.findOne({ email: email });
-    if (emailExist) {
-      res.status(400).json({ message: "This email already has an account." });
+    const usernameExist = await User.findOne({ username: username });
+
+    if (emailExist || usernameExist) {
+      res
+        .status(400)
+        .json({ message: "This email or username already has an account." });
     } else {
       if (!email || !username || !description || !password) {
         res.status(400).json({ message: "Missing parameters" });
       } else {
         const newUser = new User({
           email: email,
-          public: {
-            account: {
-              username: username,
-              description: description,
-            },
-          },
+          username: username,
+          description: description,
         });
 
         const token = uid2(64);
@@ -34,6 +34,21 @@ router.post("/user/sign-up", async (req, res) => {
         newUser.private.hash = hash;
         newUser.token = token;
         newUser.private.salt = salt;
+
+        const pictureUploaded = await cloudinary.uploader.upload(
+          "utils/picture-missing.jpg",
+          {
+            folder: `mielo/user/${newUser._id}/profile-picture/`,
+          }
+        );
+
+        const profilePicture = {
+          asset_id: pictureUploaded.asset_id,
+          secure_url: pictureUploaded.secure_url,
+          public_id: pictureUploaded.public_id,
+        };
+        newUser.profilePicture = profilePicture;
+
         await newUser.save();
 
         const new1 = await User.find(newUser).select("public token email");
@@ -65,7 +80,9 @@ router.put("/user/update", isAuthentificated, async (req, res) => {
     if (link) {
       user.public.link = link;
     }
+
     await user.save();
+
     res.status(200).json({ message: "user update", data: user });
   } catch (error) {
     res.status(400).json(error.message);
@@ -79,15 +96,18 @@ router.post(
     console.log("route : /user/add-profile-picture ");
     try {
       const picture = req.files.picture;
+
       if (picture) {
         const pictureUploaded = await cloudinary.uploader.upload(picture.path, {
           folder: `mielo/user/${req.user._id}/profile-picture/`,
         });
+
         const profilePicture = {
           asset_id: pictureUploaded.asset_id,
           secure_url: pictureUploaded.secure_url,
           public_id: pictureUploaded.public_id,
         };
+
         req.user.public.account.profilePicture = profilePicture;
 
         req.user.save();
@@ -118,11 +138,13 @@ router.post(
         const pictureUploaded = await cloudinary.uploader.upload(picture, {
           folder: `mielo/user/${req.user._id}/profile-picture/`,
         });
+
         const profilePicture = {
           asset_id: pictureUploaded.asset_id,
           secure_url: pictureUploaded.secure_url,
           public_id: pictureUploaded.public_id,
         };
+
         req.user.public.account.profilePicture = profilePicture;
         req.user.save();
 
@@ -149,13 +171,16 @@ router.post("/user/add-picture", isAuthentificated, async (req, res) => {
       const pictureUploaded = await cloudinary.uploader.upload(picture, {
         folder: `mielo/user/${req.user._id}/pictures/`,
       });
+
       const profilePicture = {
         asset_id: pictureUploaded.asset_id,
         secure_url: pictureUploaded.secure_url,
         public_id: pictureUploaded.public_id,
       };
+
       req.user.public.account.pictures.push(profilePicture);
       req.user.save();
+
       res.status(200).json({ message: "picture added", data: profilePicture });
     } else {
       res.status(400).json({ message: "missing picture" });
@@ -193,16 +218,18 @@ router.post("/user/login", async (req, res) => {
   try {
     if (req.fields.email && req.fields.password) {
       const findUser = await User.findOne({ email: req.fields.email });
+
       if (findUser) {
         const password = req.fields.password;
         const userSalt = findUser.private.salt;
         const hashToCompare = SHA256(password + userSalt).toString(encBase64);
+
         if (findUser.private.hash === hashToCompare) {
           const user = {
             _id: findUser._id,
             token: findUser.token,
-            username: findUser.public.account.username,
-            profilePicture: findUser.public.account.profilePicture,
+            username: findUser.username,
+            profilePicture: findUser.profilePicture,
           };
 
           res.status(200).json({ message: "user login", data: user });
@@ -219,14 +246,45 @@ router.post("/user/login", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-router.get("/user/:id", async (req, res) => {
-  console.log("route : /user/:id");
+router.get("/user/check-username/:username", async (req, res) => {
+  console.log("route : /user/check-username");
+  const { username } = req.params;
+
+  try {
+    if (username && username !== "x") {
+      const checkUsername = await User.find({ username: username });
+
+      if (checkUsername.length === 0) {
+        res.status(200).json({ message: `username available` });
+      } else {
+        res.status(200).json({ message: `username not available` });
+      }
+    } else {
+      res.status(200).json({ message: "username is x or inexiste" });
+    }
+  } catch (error) {
+    res.status(400).json(error.message);
+  }
+});
+router.get("/user-id/:id", async (req, res) => {
+  console.log("route : /user-id/:id");
   const { id } = req.params;
   try {
     const user = await User.findById(id).select("public email");
-    res
-      .status(200)
-      .json({ message: `user ${user.public.account.username}`, data: user });
+    res.status(200).json({ message: `user ${user.username}`, data: user });
+  } catch (error) {
+    res.status(400).json(error.message);
+  }
+});
+
+router.get("/user-token/:token", async (req, res) => {
+  console.log("route : /user-token/:token");
+  const { token } = req.params;
+  try {
+    const user = await User.findOne({ token: token }).select(
+      "username profilePicture"
+    );
+    res.status(200).json({ message: `user ${user.username}`, user: user });
   } catch (error) {
     res.status(400).json(error.message);
   }

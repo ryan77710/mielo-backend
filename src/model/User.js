@@ -3,45 +3,44 @@ const mongoose = require("mongoose");
 //delete public object //do not forget select to optimize database
 const User = mongoose.model("User", {
   email: String,
+  username: String,
+  description: { type: String, default: "new user" },
+
   status: {
     type: String,
     value: "user" || "moderator" || "administrator" || "overlord",
   },
   connected: false,
   location: { type: [Number], index: "2d" },
-  public: {
-    avatar: {
-      age: Number,
-      hairColor: String,
-      sexe: String,
-      skin: String,
-    },
-    account: {
-      username: String,
-      job: String,
-      description: { type: String, default: "new user" },
-      phone: String,
-      profilePicture: Object,
-      picture_day: Object,
-      pictures: [Object],
-      post: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Post",
-        },
-      ],
-      birth_date: Number,
-      first_name: String,
-      last_name: String,
-    },
 
-    about: {
-      link: Array,
-      fav_movies: Array,
-      fav_series: Array,
-      fav_music: Array,
-    },
+  avatar: {
+    hairColor: String,
+    sexe: String,
+    skin: String,
   },
+  account: {
+    job: String,
+    phone: String,
+    birth_date: Number,
+    first_name: String,
+    last_name: String,
+  },
+  profilePicture: Object,
+  picture_day: Object,
+  pictures: [Object],
+  post: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  about: {
+    link: Array,
+    fav_movies: Array,
+    fav_series: Array,
+    fav_music: Array,
+  },
+
   token: String,
   private: { hash: String, salt: String },
 });

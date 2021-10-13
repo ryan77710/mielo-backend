@@ -29,7 +29,7 @@ router.post("/report/publish", isAuthentificated, async (req, res) => {
         },
       });
       report.save();
-      res.status(200).json({ message: "report posted", data: report });
+      res.status(200).json({ message: "report posted", report: report });
     } else {
       res.status(400).json({ message: "field missing" });
     }
@@ -38,19 +38,15 @@ router.post("/report/publish", isAuthentificated, async (req, res) => {
   }
 });
 
-router.post(
-  "/report/user-all-report-publish",
-  isAuthentificated,
-  async (req, res) => {
-    console.log("route : /report/user-all");
-    try {
-      const reports = await Report.find({ owner: req.user._id });
-      res.status(200).json({ message: "all the report user", data: reports });
-    } catch (error) {
-      res.status(400).json(error.message);
-    }
+router.post("/report/user-all-report-publish", isAuthentificated, async (req, res) => {
+  console.log("route : /report/user-all");
+  try {
+    const reports = await Report.find({ owner: req.user._id });
+    res.status(200).json({ message: "all the report user", reports: reports });
+  } catch (error) {
+    res.status(400).json(error.message);
   }
-);
+});
 //add user status admin or modo or supremeLeader
 router.put("/report/analyse/:id", async (req, res) => {
   console.log("route : /report/analyse/:id");
@@ -59,7 +55,7 @@ router.put("/report/analyse/:id", async (req, res) => {
     const report = await Report.findById(id);
     report.status = "analyse";
     report.save();
-    res.status(200).json({ message: "analysing report", data: report });
+    res.status(200).json({ message: "analysing report", report: report });
   } catch (error) {
     res.status(400).json(error.message);
   }
@@ -73,14 +69,12 @@ router.put("/report/processed/:id", async (req, res) => {
     if (responseText) {
       const report = await Report.findById(id);
       if (report.status === "unProcessed") {
-        res
-          .status(400)
-          .json({ message: "you must analysing a report for processed it" });
+        res.status(400).json({ message: "you must analysing a report for processed it" });
       } else if (report.status === "analyse") {
         report.status = "processed";
         report.response = responseText;
         report.save();
-        res.status(200).json({ message: "report processed", data: report });
+        res.status(200).json({ message: "report processed", report: report });
       } else {
         res.status(400).json({ message: "report already processed" });
       }
@@ -97,7 +91,7 @@ router.post("/report/user-all-report/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const reports = await Report.find({ userIdReported: id });
-    res.status(200).json({ message: "user all report", data: reports });
+    res.status(200).json({ message: "user all report", reports: reports });
   } catch (error) {
     res.status(400).json(error.message);
   }

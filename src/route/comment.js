@@ -30,7 +30,7 @@ router.post("/comment/publish/:id", isAuthentificated, async (req, res) => {
       newComment.save();
       res.status(200).json({
         message: "comment added",
-        data: newComment,
+        newComment: newComment,
       });
     } else {
       res.status(400).json({ message: "missing post id or text comment" });
@@ -46,7 +46,7 @@ router.post("/comment/update/:id", isOwnerComment, async (req, res) => {
     const text = req.fields.text;
     req.comment.commentText = text;
     req.comment.save();
-    res.status(200).json({ message: "comment update", data: req.comment });
+    res.status(200).json({ message: "comment update", comment: req.comment });
   } catch (error) {
     res.status(400).json(error.message);
   }
@@ -67,7 +67,7 @@ router.post("/comment/read-all/:id", async (req, res) => {
     const id = req.params.id;
     const comments = await Comment.find({ commentOwner: id });
     if (comments && comments.length > 0) {
-      res.status(200).json({ message: "user comments", data: comments });
+      res.status(200).json({ message: "user comments", comments: comments });
     } else {
       res.status(200).json({ message: "neither comment found" });
     }

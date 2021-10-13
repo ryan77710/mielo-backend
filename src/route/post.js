@@ -34,7 +34,7 @@ router.post("/post/publish-text", isAuthentificated, async (req, res) => {
     req.user.public.account.post.push(newPost._id);
     req.user.save();
     newPost.save();
-    res.status(200).json({ message: "post publish", data: newPost });
+    res.status(200).json({ message: "post publish", newPost: newPost });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -71,7 +71,7 @@ router.post("/post/publish-picture", isAuthentificated, async (req, res) => {
 
     req.user.save();
     newPost.save();
-    res.status(200).json({ message: "post publish", data: newPost });
+    res.status(200).json({ message: "post publish", newPost: newPost });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -113,20 +113,16 @@ router.post("/post/publish-video", isAuthentificated, async (req, res) => {
             req.user.public.account.post.push(newPost._id);
             req.user.save();
             newPost.save();
-            res.status(200).json({ message: "post publish", data: newPost });
+            res.status(200).json({ message: "post publish", post: newPost });
           } else {
             if (resError) {
-              res
-                .status(400)
-                .json({ message: "upload video post failed", data: newPost });
+              res.status(400).json({ message: "upload video post failed", post: newPost });
             }
           }
         }
       );
     } else {
-      res
-        .status(400)
-        .json({ message: "the video size must be less than 100 mo" });
+      res.status(400).json({ message: "the video size must be less than 100 mo" });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -138,7 +134,7 @@ router.put("/post/update-text/:id", isOwnerPost, async (req, res) => {
   try {
     req.post.postText.text = req.fields.text;
     req.post.save();
-    res.status(200).json({ message: "post text update", data: req.post });
+    res.status(200).json({ message: "post text update", post: req.post });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -150,25 +146,19 @@ router.delete("/post/delete/:id", isOwnerPost, async (req, res) => {
     const { type } = req.fields;
     if ((type && type === "picture") || type === "video") {
       if (type === "picture") {
-        await cloudinary.api.delete_resources_by_prefix(
-          `mielo/post/${type}/${req.post._id}`
-        );
+        await cloudinary.api.delete_resources_by_prefix(`mielo/post/${type}/${req.post._id}`);
       } else if (type === "video") {
         await cloudinary.api.delete_resources(req.fields.public_id, {
           resource_type: "video",
         });
       }
-      await cloudinary.api.delete_resources_by_prefix(
-        `mielo/post/${type}/${req.post._id}`
-      );
+      await cloudinary.api.delete_resources_by_prefix(`mielo/post/${type}/${req.post._id}`);
 
       await cloudinary.api.delete_folder(`mielo/post/${type}/${req.post._id}`);
       req.post.delete();
       res.status(200).json({ message: "post delete" });
     } else {
-      res
-        .status(400)
-        .json({ message: "type missing or must be picture or video" });
+      res.status(400).json({ message: "type missing or must be picture or video" });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -183,7 +173,7 @@ router.post("/post/read/:id", async (req, res) => {
     const user = await User.findById(req.fields.userId).select("public");
     res.status(200).json({
       message: "post find",
-      data: {
+      user_post: {
         post: post,
         userPost: user,
       },
@@ -201,7 +191,7 @@ router.post("/post/read-all/:id", async (req, res) => {
 
     res.status(200).json({
       message: "all user post",
-      data: userPost,
+      userPost: userPost,
     });
   } catch (error) {
     res.status(400).json(error.message);

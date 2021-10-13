@@ -15,9 +15,7 @@ router.post("/user/sign-up", async (req, res) => {
     const usernameExist = await User.findOne({ username: username });
 
     if (emailExist || usernameExist) {
-      res
-        .status(400)
-        .json({ message: "This email or username already has an account." });
+      res.status(400).json({ message: "This email or username already has an account." });
     } else {
       if (!email || !username || !description || !password) {
         res.status(400).json({ message: "Missing parameters" });
@@ -35,12 +33,9 @@ router.post("/user/sign-up", async (req, res) => {
         newUser.token = token;
         newUser.private.salt = salt;
 
-        const pictureUploaded = await cloudinary.uploader.upload(
-          "utils/picture-missing.jpg",
-          {
-            folder: `mielo/user/${newUser._id}/profile-picture/`,
-          }
-        );
+        const pictureUploaded = await cloudinary.uploader.upload("utils/picture-missing.jpg", {
+          folder: `mielo/user/${newUser._id}/profile-picture/`,
+        });
 
         const profilePicture = {
           asset_id: pictureUploaded.asset_id,
@@ -53,9 +48,7 @@ router.post("/user/sign-up", async (req, res) => {
 
         const new1 = await User.find(newUser).select("public token email");
 
-        res
-          .status(200)
-          .json({ message: "welcome user created", data: new1[0] });
+        res.status(200).json({ message: "welcome user created", user: new1[0] });
       }
     }
   } catch (error) {
@@ -89,76 +82,64 @@ router.put("/user/update", isAuthentificated, async (req, res) => {
   }
 });
 
-router.post(
-  "/user/add-profile-picture",
-  isAuthentificated,
-  async (req, res) => {
-    console.log("route : /user/add-profile-picture ");
-    try {
-      const picture = req.files.picture;
+router.post("/user/add-profile-picture", isAuthentificated, async (req, res) => {
+  console.log("route : /user/add-profile-picture ");
+  try {
+    const picture = req.files.picture;
 
-      if (picture) {
-        const pictureUploaded = await cloudinary.uploader.upload(picture.path, {
-          folder: `mielo/user/${req.user._id}/profile-picture/`,
-        });
+    if (picture) {
+      const pictureUploaded = await cloudinary.uploader.upload(picture.path, {
+        folder: `mielo/user/${req.user._id}/profile-picture/`,
+      });
 
-        const profilePicture = {
-          asset_id: pictureUploaded.asset_id,
-          secure_url: pictureUploaded.secure_url,
-          public_id: pictureUploaded.public_id,
-        };
+      const profilePicture = {
+        asset_id: pictureUploaded.asset_id,
+        secure_url: pictureUploaded.secure_url,
+        public_id: pictureUploaded.public_id,
+      };
 
-        req.user.public.account.profilePicture = profilePicture;
+      req.user.public.account.profilePicture = profilePicture;
 
-        req.user.save();
-        res
-          .status(200)
-          .json({ message: "profile picture add", data: profilePicture });
-      } else {
-        res.status(400).json({ message: "picture missing" });
-      }
-    } catch (error) {
-      res.status(400).json(error.message);
+      req.user.save();
+      res.status(200).json({ message: "profile picture add", profilePicture: profilePicture });
+    } else {
+      res.status(400).json({ message: "picture missing" });
     }
+  } catch (error) {
+    res.status(400).json(error.message);
   }
-);
+});
 
-router.post(
-  "/user/picture-profile-change",
-  isAuthentificated,
-  async (req, res) => {
-    console.log(" road: /user/picture-profile-change");
-    try {
-      if (req.files.picture) {
-        const picture = req.files.picture.path;
+router.post("/user/picture-profile-change", isAuthentificated, async (req, res) => {
+  console.log(" road: /user/picture-profile-change");
+  try {
+    if (req.files.picture) {
+      const picture = req.files.picture.path;
 
-        const public_id = req.user.public.account.profilePicture.public_id;
-        await cloudinary.uploader.destroy(public_id);
+      const public_id = req.user.public.account.profilePicture.public_id;
+      await cloudinary.uploader.destroy(public_id);
 
-        const pictureUploaded = await cloudinary.uploader.upload(picture, {
-          folder: `mielo/user/${req.user._id}/profile-picture/`,
-        });
+      const pictureUploaded = await cloudinary.uploader.upload(picture, {
+        folder: `mielo/user/${req.user._id}/profile-picture/`,
+      });
 
-        const profilePicture = {
-          asset_id: pictureUploaded.asset_id,
-          secure_url: pictureUploaded.secure_url,
-          public_id: pictureUploaded.public_id,
-        };
+      const profilePicture = {
+        asset_id: pictureUploaded.asset_id,
+        secure_url: pictureUploaded.secure_url,
+        public_id: pictureUploaded.public_id,
+      };
 
-        req.user.public.account.profilePicture = profilePicture;
-        req.user.save();
+      req.user.public.account.profilePicture = profilePicture;
+      req.user.save();
 
-        res
-          .status(200)
-          .json({ message: "picture update", data: profilePicture });
-      } else {
-        res.status(400).json({ message: "missing picture" });
-      }
-    } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(200).json({ message: "picture update", profilePicture: profilePicture });
+    } else {
+      res.status(400).json({ message: "missing picture" });
     }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
-);
+});
 router.post("/user/add-picture", isAuthentificated, async (req, res) => {
   console.log("route : /user/add-picture");
   try {
@@ -181,7 +162,7 @@ router.post("/user/add-picture", isAuthentificated, async (req, res) => {
       req.user.public.account.pictures.push(profilePicture);
       req.user.save();
 
-      res.status(200).json({ message: "picture added", data: profilePicture });
+      res.status(200).json({ message: "picture added", profilePicture: profilePicture });
     } else {
       res.status(400).json({ message: "missing picture" });
     }
@@ -204,7 +185,7 @@ router.post("/user/delete-picture", isAuthentificated, async (req, res) => {
         }
       }
       req.user.save();
-      res.status(200).json({ message: "picture deleted", data: userPictures });
+      res.status(200).json({ message: "picture deleted", userPictures: userPictures });
     } else {
       res.status(400).json({ message: "missing public_id or asset_id" });
     }
@@ -232,7 +213,7 @@ router.post("/user/login", async (req, res) => {
             profilePicture: findUser.profilePicture,
           };
 
-          res.status(200).json({ message: "user login", data: user });
+          res.status(200).json({ message: "user login", user: user });
         } else {
           res.status(400).json({ message: "email or password incorrect" });
         }
@@ -281,9 +262,7 @@ router.get("/user-token/:token", async (req, res) => {
   console.log("route : /user-token/:token");
   const { token } = req.params;
   try {
-    const user = await User.findOne({ token: token }).select(
-      "username profilePicture"
-    );
+    const user = await User.findOne({ token: token }).select("username profilePicture");
     res.status(200).json({ message: `user ${user.username}`, user: user });
   } catch (error) {
     res.status(400).json(error.message);

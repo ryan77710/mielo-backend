@@ -16,8 +16,8 @@ router.post("/location/around", async (req, res) => {
         $maxDistance: 0.05,
       },
     };
-    const users = await User.find(filter).select("email location");
-    res.status(200).json({ message: "users near", data: users });
+    const users = await User.find(filter).select("username location profilePicture");
+    res.status(200).json({ message: "users near", users: users });
   } catch (error) {
     res.status(400).json(error.message);
   }

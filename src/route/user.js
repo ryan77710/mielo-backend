@@ -251,13 +251,22 @@ router.get("/user-id/:id", async (req, res) => {
   console.log("route : /user-id/:id");
   const { id } = req.params;
   try {
-    const user = await User.findById(id).select("public email");
+    const user = await User.findById(id).select("public email post pictures about profilePicture picture_day");
     res.status(200).json({ message: `user ${user.username}`, data: user });
   } catch (error) {
     res.status(400).json(error.message);
   }
 });
-
+router.get("/user-profile/:token", async (req, res) => {
+  console.log("route : /user-profile/:token");
+  const { token } = req.params;
+  try {
+    const user = await User.findOne({ token: token }).select("username profile_Day profilePicture description");
+    res.status(200).json({ message: `user ${user.username}`, user: user });
+  } catch (error) {
+    res.status(400).json(error.message);
+  }
+});
 router.get("/user-token/:token", async (req, res) => {
   console.log("route : /user-token/:token");
   const { token } = req.params;

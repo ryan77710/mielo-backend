@@ -39,6 +39,7 @@ const User = mongoose.model("User", {
     fav_movies: Array,
     fav_series: Array,
     fav_music: Array,
+    fav_manga: Array,
   },
 
   token: String,

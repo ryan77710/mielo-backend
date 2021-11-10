@@ -159,7 +159,7 @@ router.post("/user/add-picture", isAuthentificated, async (req, res) => {
         public_id: pictureUploaded.public_id,
       };
 
-      req.user.public.account.pictures.push(profilePicture);
+      req.user.pictures.push(profilePicture);
       req.user.save();
 
       res.status(200).json({ message: "picture added", profilePicture: profilePicture });
@@ -178,7 +178,7 @@ router.post("/user/delete-picture", isAuthentificated, async (req, res) => {
     if (asset_id && public_id) {
       await cloudinary.uploader.destroy(public_id);
 
-      const userPictures = req.user.public.account.pictures;
+      const userPictures = req.user.pictures;
       for (let i = 0; i < userPictures.length; i++) {
         if (userPictures[i].asset_id === asset_id) {
           userPictures.splice(i, 1);
@@ -261,7 +261,7 @@ router.get("/user-profile/:token", async (req, res) => {
   console.log("route : /user-profile/:token");
   const { token } = req.params;
   try {
-    const user = await User.findOne({ token: token }).select("username profile_Day profilePicture description");
+    const user = await User.findOne({ token: token }).select("username profile_Day profilePicture about email description pictures");
     res.status(200).json({ message: `user ${user.username}`, user: user });
   } catch (error) {
     res.status(400).json(error.message);

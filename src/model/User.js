@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-//missing clothe ,add friend ,follower,,change username,job,pictures,pictureDay,pictureProfile, post  place
-//delete public object //do not forget select to optimize database
+//missing clothe ,user rate and post and picture rate
+//do not forget select to optimize database
 const User = mongoose.model("User", {
   email: String,
   username: String,
@@ -34,12 +34,27 @@ const User = mongoose.model("User", {
       ref: "Post",
     },
   ],
+  friends: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  numberOfFriends: { type: Number, default: 0 },
+  numberOfFollowers: { type: Number, default: 0 },
+  numberOfPosts: { type: Number, default: 0 },
   about: {
-    link: Array,
-    fav_movies: Array,
-    fav_series: Array,
-    fav_music: Array,
-    fav_manga: Array,
+    link: [{ id: String, linkType: String, message: String, ref: String, logo: String }],
+    fav_movies: [{ id: String, order: Number, title: String }],
+    fav_series: [{ id: String, order: Number, title: String }],
+    fav_music: [{ id: String, order: Number, title: String }],
+    fav_manga: [{ id: String, order: Number, title: String }],
   },
 
   token: String,

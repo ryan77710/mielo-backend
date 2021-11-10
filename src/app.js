@@ -36,6 +36,15 @@ app.use(reportRoute);
 const locationRoute = require("./route/location");
 app.use(locationRoute);
 
+const friendRoute = require("./route/friend");
+app.use(friendRoute);
+
+const followRoute = require("./route/follow");
+app.use(followRoute);
+
+const linkRoute = require("./route/link");
+app.use(linkRoute);
+
 app.get("/", (req, res) => {
   res.status(200).send("Home");
 });

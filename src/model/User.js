@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 //missing clothe ,user rate and post and picture rate
 //do not forget select to optimize database
+//position post and home location popularity
 const User = mongoose.model("User", {
   email: String,
   username: String,
@@ -49,12 +50,14 @@ const User = mongoose.model("User", {
   numberOfFriends: { type: Number, default: 0 },
   numberOfFollowers: { type: Number, default: 0 },
   numberOfPosts: { type: Number, default: 0 },
+  numberOfPictures: { type: Number, default: 0 },
   about: {
     link: [{ id: String, linkType: String, message: String, ref: String, logo: String }],
     fav_movies: [{ id: String, order: Number, title: String }],
     fav_series: [{ id: String, order: Number, title: String }],
     fav_music: [{ id: String, order: Number, title: String }],
     fav_manga: [{ id: String, order: Number, title: String }],
+    fav_book: [{ id: String, order: Number, title: String }],
   },
 
   token: String,

@@ -116,7 +116,7 @@ router.post("/user/picture-profile-change", isAuthentificated, async (req, res) 
     if (req.files.picture) {
       const picture = req.files.picture.path;
 
-      const public_id = req.user.public.account.profilePicture.public_id;
+      const public_id = req.user.profilePicture.public_id;
       await cloudinary.uploader.destroy(public_id);
 
       const pictureUploaded = await cloudinary.uploader.upload(picture, {
@@ -129,7 +129,7 @@ router.post("/user/picture-profile-change", isAuthentificated, async (req, res) 
         public_id: pictureUploaded.public_id,
       };
 
-      req.user.public.account.profilePicture = profilePicture;
+      req.user.profilePicture = profilePicture;
       req.user.save();
 
       res.status(200).json({ message: "picture update", profilePicture: profilePicture });
